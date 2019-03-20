@@ -4,12 +4,15 @@
 const { SpecReporter } = require('jasmine-spec-reporter');
 
 exports.config = {
-  allScriptsTimeout: 11000,
+  allScriptsTimeout: 22000,
   specs: [
     './src/**/*.e2e-spec.ts'
   ],
   capabilities: {
-    'browserName': 'chrome'
+    browserName: 'chrome',
+    chromeOptions: {
+      args: process.env.CI === 'true' ? ['--headless', '--no-sandbox', '--disable-dev-shm-usage'] : []
+    }
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
@@ -24,5 +27,6 @@ exports.config = {
       project: require('path').join(__dirname, './tsconfig.e2e.json')
     });
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
-  }
+  },
+  resultJsonOutputFile: 'results/protractor-results.json'
 };
