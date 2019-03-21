@@ -9,9 +9,11 @@ import { RaceService } from '../race.service';
 })
 export class RacesComponent implements OnInit {
   races: Array<RaceModel> = [];
+  size = 0;
   constructor(private raceService: RaceService) { }
 
   ngOnInit() {
     this.races = this.raceService.list();
+    this.size = 4;
   }
 }

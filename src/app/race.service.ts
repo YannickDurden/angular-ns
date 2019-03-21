@@ -10,7 +10,13 @@ export class RaceService {
   constructor() { }
 
   list(): Array<RaceModel> {
-    this.races = [{ name: 'Lyon'}, { name: 'London'}];
+    this.races = [
+      {name: 'Lyon'},
+      {name: 'Los Angeles'},
+      {name: 'Sydney'},
+      {name: 'Tokyo'},
+      {name: 'Casablanca'}
+    ];
 
     return this.races;
   }
