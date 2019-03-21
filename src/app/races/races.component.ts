@@ -15,7 +15,8 @@ export class RacesComponent implements OnInit {
   ngOnInit() {
     this.size = 4;
     this.raceService.list().subscribe(
-      races => this.races = races
+      (races: Array<RaceModel>) => this.races =  races
     );
   }
 }
+
