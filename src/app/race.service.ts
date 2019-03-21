@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { RaceModel } from './models/races.model';
+import { RaceModel } from './models/race.model';
+import { of, Observable } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ export class RaceService {
 
   constructor() { }
 
-  list(): Array<RaceModel> {
+  list(): Observable<Array<RaceModel>> {
     this.races = [
       {name: 'Lyon'},
       {name: 'Los Angeles'},
@@ -18,6 +20,6 @@ export class RaceService {
       {name: 'Casablanca'}
     ];
 
-    return this.races;
+    return of(this.races).pipe(delay(500));
   }
 }

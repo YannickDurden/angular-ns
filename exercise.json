@@ -1,1 +1,1 @@
-{"pack":"36","id":4,"title":"Using pipes","specs":[{"name":"src/app/race.service.spec.ts","hash":"42eb5e54be78cd510bcdb7fe8e118fcb44541650"},{"name":"src/app/races/races.component.spec.ts","hash":"c546d5397b265fd7345f35d0c180042389641aec"}]}
+{"pack":"36","id":5,"title":"Observables with RxJS","specs":[{"name":"src/app/race.service.spec.ts","hash":"4164f96ce1bc7334cc506b6b047348fc45b00caa"},{"name":"src/app/races/races.component.spec.ts","hash":"6be2b9e3fd0bf8fb7b4e7e65d1e969975218a036"}]}

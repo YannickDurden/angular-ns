@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RaceModel } from '../models/races.model';
+import { RaceModel } from '../models/race.model';
 import { RaceService } from '../race.service';
 
 @Component({
@@ -13,7 +13,9 @@ export class RacesComponent implements OnInit {
   constructor(private raceService: RaceService) { }
 
   ngOnInit() {
-    this.races = this.raceService.list();
     this.size = 4;
+    this.raceService.list().subscribe(
+      races => this.races = races
+    );
   }
 }
