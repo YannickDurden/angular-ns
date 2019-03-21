@@ -1,0 +1,16 @@
+import { Component, OnInit } from '@angular/core';
+import { RaceModel } from '../models/races.model';
+
+@Component({
+  selector: 'pr-races',
+  templateUrl: './races.component.html',
+  styleUrls: ['./races.component.css']
+})
+export class RacesComponent implements OnInit {
+  races: Array<RaceModel> = [];
+  constructor() { }
+
+  ngOnInit() {
+    this.races = [{ name: 'Lyon'}, { name: 'London'}];
+  }
+}
