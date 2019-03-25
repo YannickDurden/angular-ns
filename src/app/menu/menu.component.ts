@@ -31,4 +31,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     return this.navbarCollapsed = !this.navbarCollapsed;
   }
 
+  getAuthenticatedUser() {
+    return this.user;
+  }
+
 }

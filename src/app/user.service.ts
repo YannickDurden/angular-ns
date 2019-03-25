@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { RegistrationModel } from './models/registration.model';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { UserModel } from './models/user.model';
 import { tap } from 'rxjs/operators';
 
@@ -12,7 +12,7 @@ import { tap } from 'rxjs/operators';
 export class UserService {
   userRegistrationUrl = environment.baseUrlApiNinjaSquad + '/api/users';
   userAuthenticationUrl = environment.baseUrlApiNinjaSquad + '/api/users/authentication';
-  userEvents: Subject<UserModel> = new Subject<UserModel>();
+  userEvents: BehaviorSubject<UserModel> = new BehaviorSubject<UserModel>(undefined);
 
   constructor(private httpClient: HttpClient) { }
 
