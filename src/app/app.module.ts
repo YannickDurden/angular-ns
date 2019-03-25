@@ -12,7 +12,8 @@ import { RouterModule } from '@angular/router';
 import { ROUTES } from './app.routes';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -23,9 +24,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     PonyComponent,
     FromNowPipe,
     HomeComponent,
-    RegisterComponent
+    RegisterComponent,
+    LoginComponent
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
