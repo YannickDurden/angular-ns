@@ -39,6 +39,9 @@ describe('UserService', () => {
   });
 
   it('should authenticate a user', () => {
+    // spy on userEvents
+    spyOn(userService.userEvents, 'next');
+
     const credentials = { login: 'cedric', password: 'hello' };
     let actualUser;
     userService.authenticate(credentials).subscribe(fetchedUser => actualUser = fetchedUser);
@@ -48,5 +51,6 @@ describe('UserService', () => {
     req.flush(user);
 
     expect(actualUser).withContext('The observable should emit the user').toBe(user);
+    expect(userService.userEvents.next).toHaveBeenCalledWith(user);
   });
 });

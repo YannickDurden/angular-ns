@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { RegistrationModel } from './models/registration.model';
+import { Subject } from 'rxjs';
 import { UserModel } from './models/user.model';
-import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,16 +12,19 @@ import { Observable } from 'rxjs';
 export class UserService {
   userRegistrationUrl = environment.baseUrlApiNinjaSquad + '/api/users';
   userAuthenticationUrl = environment.baseUrlApiNinjaSquad + '/api/users/authentication';
+  userEvents: Subject<UserModel> = new Subject<UserModel>();
 
   constructor(private httpClient: HttpClient) { }
 
   register(login: string, password: string, birthYear: number) {
-    const registration: UserModel = { login, password, birthYear };
+    const registration: RegistrationModel = { login, password, birthYear };
 
-    return this.httpClient.post<UserModel>(this.userRegistrationUrl, registration);
+    return this.httpClient.post<RegistrationModel>(this.userRegistrationUrl, registration);
   }
 
-  authenticate(credentials: {login: string; password: string}): Observable<any> {
-    return this.httpClient.post(this.userAuthenticationUrl, credentials);
+  authenticate(credentials: {login: string; password: string}) {
+    return this.httpClient.post<UserModel>(this.userAuthenticationUrl, credentials).pipe(
+      tap(response => this.userEvents.next(response)),
+    );
   }
 }

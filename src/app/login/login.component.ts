@@ -22,7 +22,9 @@ export class LoginComponent implements OnInit {
 
   authenticate() {
     return this.userService.authenticate(this.credentials).subscribe(
-      response => this.router.navigate(['/']),
+      success => {
+        this.router.navigate(['/']);
+      },
       error => this.authenticationFailed = true
     );
   }
