@@ -14,17 +14,57 @@ export class UserService {
   userAuthenticationUrl = environment.baseUrlApiNinjaSquad + '/api/users/authentication';
   userEvents: BehaviorSubject<UserModel> = new BehaviorSubject<UserModel>(undefined);
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {
+    this.retrieveUser();
+   }
 
+   /**
+    * Enregistre un utilisateur
+    *
+    * @param login string
+    * @param password string
+    * @param birthYear number
+    *
+    * @returns Observable<UserModel>
+    */
   register(login: string, password: string, birthYear: number) {
     const registration: RegistrationModel = { login, password, birthYear };
 
     return this.httpClient.post<RegistrationModel>(this.userRegistrationUrl, registration);
   }
 
+  /**
+   * Connexion utilisateur
+   *
+   * @param credentials object
+   *
+   * @returns Observable<UserModel>
+   */
   authenticate(credentials: {login: string; password: string}) {
-    return this.httpClient.post<UserModel>(this.userAuthenticationUrl, credentials).pipe(
-      tap(response => this.userEvents.next(response)),
-    );
+    return this.httpClient
+      .post<UserModel>(this.userAuthenticationUrl, credentials)
+      .pipe(
+        tap(user => this.storeLoggedInUser(user))
+      );
+  }
+
+  /**
+   * Stocke les informations utilisateur dans le localStorage à la connexion
+   * @param user UserModel
+   */
+  storeLoggedInUser(user: UserModel) {
+    window.localStorage.setItem('rememberMe', JSON.stringify(user));
+    this.userEvents.next(user);
+  }
+
+  /**
+   * Récupère les informations utilisateur dans le localStorage
+   */
+  retrieveUser() {
+    const userFromLocalStorage = window.localStorage.getItem('rememberMe');
+    if (userFromLocalStorage) {
+      const user = JSON.parse(userFromLocalStorage);
+      this.userEvents.next(user);
+    }
   }
 }
