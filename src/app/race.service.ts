@@ -44,4 +44,10 @@ export class RaceService {
 
     return this.httpClient.get<RaceModel>(urlGetRaceById);
   }
+
+  cancelBet(raceId: number) {
+    const urlCancellingBet = `${environment.baseUrl}/api/races/${raceId}/bets`;
+
+    return this.httpClient.delete(urlCancellingBet);
+  }
 }
