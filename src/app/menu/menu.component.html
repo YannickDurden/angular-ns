@@ -5,20 +5,20 @@
   </button>
   <div id="navbar" class="navbar-collapse" [class.collapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto" *ngIf="!getAuthenticatedUser(); else racesMenu">
-      <li class="nav-item">
-          <a routerLink="login" routerLinkActive="router-link-active">Login</a>
+      <li routerLinkActive="active" class="nav-item">
+          <a class="nav-link" routerLink="login">Login</a>
       </li>
       <li class="nav-item">
-          <a>Register</a>
+          <a class="nav-link">Register</a>
       </li>
     </ul>
     <ng-template #racesMenu>
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a routerLink="races" routerLinkActive="router-link-active">Races</a>
+            <li routerLinkActive="active" class="nav-item">
+                <a class="nav-link" routerLink="races">Races</a>
             </li>
-            <li class="nav-item">
-                <a routerLink="/" routerLinkActive="router-link-active">Home</a>
+            <li routerLinkActive="active" class="nav-item">
+                <a class="nav-link" routerLink="/">Home</a>
             </li>
         </ul>
       </ng-template>
@@ -28,6 +28,9 @@
         <span class="fa fa-star"></span>
         {{ user.money }}
       </span>
+      <a class="btn btn-link navbar-btn" (click)="logout($event)">
+        <span class="fa fa-power-off"></span>
+      </a>
     </div>
   </div>
 </nav>
