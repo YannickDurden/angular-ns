@@ -5,16 +5,17 @@ import { RegistrationModel } from './models/registration.model';
 import { BehaviorSubject } from 'rxjs';
 import { UserModel } from './models/user.model';
 import { tap } from 'rxjs/operators';
+import { JwtInterceptorService } from './jwt-interceptor.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  userRegistrationUrl = environment.baseUrlApiNinjaSquad + '/api/users';
-  userAuthenticationUrl = environment.baseUrlApiNinjaSquad + '/api/users/authentication';
+  userRegistrationUrl = environment.baseUrl + '/api/users';
+  userAuthenticationUrl = environment.baseUrl + '/api/users/authentication';
   userEvents: BehaviorSubject<UserModel> = new BehaviorSubject<UserModel>(undefined);
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private jwtInterceptorService: JwtInterceptorService) {
     this.retrieveUser();
    }
 
@@ -53,8 +54,9 @@ export class UserService {
    * @param user UserModel
    */
   storeLoggedInUser(user: UserModel) {
-    window.localStorage.setItem('rememberMe', JSON.stringify(user));
     this.userEvents.next(user);
+    window.localStorage.setItem('rememberMe', JSON.stringify(user));
+    this.jwtInterceptorService.setJwtToken(user.token);
   }
 
   /**
@@ -65,11 +67,13 @@ export class UserService {
     if (userFromLocalStorage) {
       const user = JSON.parse(userFromLocalStorage);
       this.userEvents.next(user);
+      this.jwtInterceptorService.setJwtToken(user.token);
     }
   }
 
   logout() {
     this.userEvents.next(null);
     window.localStorage.removeItem('rememberMe');
+    this.jwtInterceptorService.removeJwtToken();
   }
 }

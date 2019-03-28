@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrlApiNinjaSquad : 'http://ponyracer.ninja-squad.com'
+  baseUrl: 'http://ponyracer.ninja-squad.com'
 };
 
 /*

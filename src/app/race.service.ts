@@ -12,7 +12,7 @@ export class RaceService {
   constructor(private httpClient: HttpClient) { }
 
   list() {
-    const urlListPendingRaces = environment.baseUrlApiNinjaSquad + '/api/races?status=PENDING';
+    const urlListPendingRaces = environment.baseUrl + '/api/races?status=PENDING';
 
     return this.httpClient.get<Array<RaceModel>>(urlListPendingRaces);
   }
