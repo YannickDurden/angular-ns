@@ -1,4 +1,6 @@
-<!--[raceModel] correspond à l'input du race component auquel on lui passe la variable race-->
-<pr-race *ngFor="let race of races | slice:0:size" [raceModel]="race">
-</pr-race>
+<div *ngFor="let race of races | slice:0:size">
+  <!--[raceModel] correspond à l'input du race component auquel on lui passe la variable race-->
+  <pr-race [raceModel]="race"></pr-race>
+  <a [routerLink]="['/races', race.id]" >Bet on {{ race.name }}</a>
+</div>
 

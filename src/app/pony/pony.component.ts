@@ -24,5 +24,4 @@ export class PonyComponent implements OnInit {
   clicked() {
     this.ponyClicked.emit(this.ponyModel);
   }
-
 }
