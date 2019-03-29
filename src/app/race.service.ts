@@ -59,7 +59,7 @@ export class RaceService {
   live(raceId: number): Observable<Array<PonyWithPositionModel>> {
     const channel = `/race/${raceId}`;
 
-    return this.wsService.connect(channel).pipe(
+    return this.wsService.connect<LiveRaceModel>(channel).pipe(
       map(
         (liveRace => liveRace.ponies)
       )
