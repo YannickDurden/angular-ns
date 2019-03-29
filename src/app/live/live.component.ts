@@ -25,7 +25,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     );
 
     this.positionSubscription = this.raceService.live(+this.raceId).subscribe(
-      positions => this.poniesWithPosition = positions
+      ponies => { this.poniesWithPosition = ponies; }
     );
   }
 
