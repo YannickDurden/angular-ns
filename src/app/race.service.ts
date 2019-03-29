@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { RaceModel } from './models/race.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, interval } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { PonyWithPositionModel } from './models/pony.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +12,7 @@ import { Observable } from 'rxjs';
 export class RaceService {
   races: Array<RaceModel> = [];
   raceModel: RaceModel;
+  ponyWithPositionModel: PonyWithPositionModel;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -49,5 +52,41 @@ export class RaceService {
     const urlCancellingBet = `${environment.baseUrl}/api/races/${raceId}/bets`;
 
     return this.httpClient.delete(urlCancellingBet);
+  }
+
+
+  live(raceId: number): Observable<Array<PonyWithPositionModel>> {
+    const positions = interval(1000);
+    return positions.pipe(
+      map(
+        (position => [{
+          id: 1,
+          name: 'Superb Runner',
+          color: 'BLUE',
+          position
+        }, {
+          id: 2,
+          name: 'Awesome Fridge',
+          color: 'GREEN',
+          position
+        }, {
+          id: 3,
+          name: 'Great Bottle',
+          color: 'ORANGE',
+          position
+        }, {
+          id: 4,
+          name: 'Little Flower',
+          color: 'YELLOW',
+          position
+        }, {
+          id: 5,
+          name: 'Nice Rock',
+          color: 'PURPLE',
+          position
+        }])
+      ),
+      take(101)
+    );
   }
 }

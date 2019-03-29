@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { BetComponent } from './bet/bet.component';
+import { LiveComponent } from './live/live.component';
 
 export const ROUTES: Routes = [
   {
@@ -19,7 +20,16 @@ export const ROUTES: Routes = [
       },
       {
         path: ':raceId',
-        component: BetComponent
+        children: [
+          {
+            path: '',
+            component: BetComponent
+          },
+          {
+            path: 'live',
+            component: LiveComponent
+          }
+        ]
       }
     ]
   },

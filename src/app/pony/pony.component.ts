@@ -8,6 +8,7 @@ import { PonyModel } from '../models/pony.model';
 })
 export class PonyComponent implements OnInit {
   @Input() ponyModel: PonyModel;
+  @Input() isRunning: boolean;
   @Output() readonly ponyClicked = new EventEmitter<PonyModel>();
   constructor() { }
 
@@ -17,11 +18,15 @@ export class PonyComponent implements OnInit {
   getPonyImageUrl() {
     const basePath = 'assets/images/pony-';
     const ponyColor = this.ponyModel.color;
+    const imagePath = basePath + ponyColor.toLowerCase();
 
-    return basePath + ponyColor.toLowerCase() + '.gif';
+    return this.isRunning
+      ? imagePath + '-running.gif'
+      : imagePath + '.gif';
   }
 
   clicked() {
     this.ponyClicked.emit(this.ponyModel);
   }
 }
+
