@@ -4,6 +4,7 @@ import { RaceService } from '../race.service';
 import { RaceModel } from '../models/race.model';
 import { PonyWithPositionModel } from '../models/pony.model';
 import { Subscription } from 'rxjs';
+import { filter, tap, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'pr-live',
@@ -12,21 +13,42 @@ import { Subscription } from 'rxjs';
 })
 export class LiveComponent implements OnInit, OnDestroy {
   raceModel: RaceModel;
-  poniesWithPosition: Array<PonyWithPositionModel>;
+  poniesWithPosition: Array<PonyWithPositionModel> = [];
+  winners: Array<PonyWithPositionModel>;
   positionSubscription: Subscription;
+  betWon: boolean;
+  error: boolean;
   raceId: string;
 
   constructor(private raceService: RaceService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.raceId = this.route.snapshot.paramMap.get('raceId');
-    this.raceService.get(+this.raceId).subscribe(
-      race => this.raceModel = race
-    );
-
-    this.positionSubscription = this.raceService.live(+this.raceId).subscribe(
-      ponies => { this.poniesWithPosition = ponies; }
-    );
+    this.positionSubscription = this.raceService.get(+this.raceId)
+      .pipe(
+        tap(race => this.raceModel = race),
+        filter(race => race.status !== 'FINISHED'),
+        switchMap(
+          race => this.raceService.live(+race.id)
+        )
+      )
+      .subscribe(
+        next => {
+          this.poniesWithPosition = next;
+          this.raceModel.status = 'RUNNING';
+        },
+        error => this.error = true,
+        () => {
+          this.raceModel.status = 'FINISHED';
+          this.winners = this.poniesWithPosition.filter(
+            ponyWithPosition => ponyWithPosition.position >= 100
+          );
+          this.betWon = this.winners.some(
+            ponyWithPosition => ponyWithPosition.id === this.raceModel.betPonyId
+          );
+        }
+      )
+    ;
   }
 
   ngOnDestroy() {

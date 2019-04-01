@@ -3,7 +3,7 @@ import { RaceModel, LiveRaceModel } from './models/race.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 import { PonyWithPositionModel } from './models/pony.model';
 import { WsService } from './ws.service';
 
@@ -49,6 +49,11 @@ export class RaceService {
     return this.httpClient.get<RaceModel>(urlGetRaceById);
   }
 
+  /**
+   * Annule un pari
+   *
+   * @param raceId number
+   */
   cancelBet(raceId: number) {
     const urlCancellingBet = `${environment.baseUrl}/api/races/${raceId}/bets`;
 
@@ -56,13 +61,19 @@ export class RaceService {
   }
 
 
+  /**
+   * Récupère la position des poneys en temps réel pendant une course
+   * Transforme liveRace pour ne renvoyer que la liste des poneys
+   * liveRace est à l'origine un objet poney contenant des tableaux
+   *
+   * @param raceId number
+   */
   live(raceId: number): Observable<Array<PonyWithPositionModel>> {
     const channel = `/race/${raceId}`;
 
-    return this.wsService.connect(channel).pipe(
-      map(
-        (liveRace => liveRace.ponies)
-      )
+    return this.wsService.connect<LiveRaceModel>(channel).pipe(
+      takeWhile(liveRace => liveRace.status !== 'FINISHED'),
+      map(liveRace => liveRace.ponies)
     );
   }
 }
