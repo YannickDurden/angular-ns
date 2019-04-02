@@ -9,6 +9,7 @@ import { PonyModel } from '../models/pony.model';
 export class PonyComponent implements OnInit {
   @Input() ponyModel: PonyModel;
   @Input() isRunning: boolean;
+  @Input() isBoosted: boolean;
   @Output() readonly ponyClicked = new EventEmitter<PonyModel>();
   constructor() { }
 
@@ -20,9 +21,13 @@ export class PonyComponent implements OnInit {
     const ponyColor = this.ponyModel.color;
     const imagePath = basePath + ponyColor.toLowerCase();
 
-    return this.isRunning
-      ? imagePath + '-running.gif'
-      : imagePath + '.gif';
+    if (this.isBoosted) {
+      return imagePath + '-rainbow.gif';
+    } else if (this.isRunning) {
+      return imagePath + '-running.gif';
+    } else {
+      return imagePath + '.gif';
+    }
   }
 
   clicked() {

@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { RaceService } from '../race.service';
 import { RaceModel } from '../models/race.model';
 import { PonyWithPositionModel } from '../models/pony.model';
-import { Subscription } from 'rxjs';
-import { filter, tap, switchMap } from 'rxjs/operators';
+import { Subscription, Subject, interval, EMPTY } from 'rxjs';
+import { filter, tap, switchMap, groupBy, mergeMap, bufferToggle, throttleTime, map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'pr-live',
@@ -16,6 +16,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   poniesWithPosition: Array<PonyWithPositionModel> = [];
   winners: Array<PonyWithPositionModel>;
   positionSubscription: Subscription;
+  clickSubject: Subject<PonyWithPositionModel> = new Subject<PonyWithPositionModel>();
   betWon: boolean;
   error: boolean;
   raceId: string;
@@ -49,12 +50,39 @@ export class LiveComponent implements OnInit, OnDestroy {
         }
       )
     ;
+    this.clickSubject
+    .pipe(
+      groupBy(pony => pony.id, pony => pony.id),
+      mergeMap(obs => obs.pipe(bufferToggle(
+        obs, () => interval(1000)
+      ))),
+      filter(obs => obs.length >= 5),
+      throttleTime(1000),
+      map(ponies => ponies[0]),
+      switchMap(
+        ponyId => this.raceService.boost(this.raceModel.id, ponyId)
+        .pipe(
+          catchError(() => EMPTY)
+        )
+      )
+    )
+    .subscribe(
+      () => {}
+    );
   }
 
   ngOnDestroy() {
     if (this.poniesWithPosition) {
       this.positionSubscription.unsubscribe();
     }
+  }
+
+  onClick(pony: PonyWithPositionModel) {
+    this.clickSubject.next(pony);
+  }
+
+  ponyById(index: number, pony: PonyWithPositionModel) {
+    return pony.id;
   }
 
 }

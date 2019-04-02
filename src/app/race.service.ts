@@ -76,4 +76,16 @@ export class RaceService {
       map(liveRace => liveRace.ponies)
     );
   }
+
+  /**
+   * Boost un poney si la course est en cours
+   *
+   * @param raceId number
+   * @param ponyId number
+   */
+  boost(raceId: number, ponyId: number) {
+    const urlBoosts = `${environment.baseUrl}/api/races/${raceId}/boosts`;
+
+    return this.httpClient.post(urlBoosts, {ponyId});
+  }
 }
