@@ -1,4 +1,4 @@
-import { async, TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RouterLinkWithHref } from '@angular/router';
 import { By } from '@angular/platform-browser';
@@ -12,7 +12,8 @@ describe('MenuComponent', () => {
 
   const fakeUserService = {
     userEvents: new Subject<UserModel>(),
-    logout: () => {}
+    logout: () => {},
+    scoreUpdates: (userId: number) => {}
   } as UserService;
   const fakeRouter = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -91,17 +92,45 @@ describe('MenuComponent', () => {
     expect(linksAfterLogin.length).withContext('You should have two routerLink: one to the races, one to the home').toBe(2);
   });
 
-  it('should listen to userEvents in ngOnInit', async(() => {
+  it('should listen to userEvents and score updates in ngOnInit', fakeAsync(() => {
     const component = new MenuComponent(fakeUserService, fakeRouter);
     component.ngOnInit();
 
-    const user = { login: 'cedric', money: 200 } as UserModel;
-
-    fakeUserService.userEvents.subscribe(() => {
-      expect(component.user).withContext('Your component should listen to the `userEvents` observable').toBe(user);
-    });
-
+    // emulate a login
+    const fakeScoreUpdates = new Subject<UserModel>();
+    spyOn(fakeUserService, 'scoreUpdates').and.returnValue(fakeScoreUpdates);
+    const user = { id: 1, login: 'cedric', money: 200 } as UserModel;
     fakeUserService.userEvents.next(user);
+    tick();
+
+    expect(component.user).withContext('Your component should listen to the `userEvents` observable on login').toBe(user);
+    expect(fakeUserService.scoreUpdates).toHaveBeenCalledWith(user.id);
+    tick();
+
+    // emulate a score update
+    user.money = 300;
+    fakeScoreUpdates.next(user);
+    tick();
+
+    expect(component.user.money).withContext('Your component should listen to the `scoreUpdates` observable').toBe(300);
+
+    // emulate an error
+    fakeScoreUpdates.error('You should catch potential errors on score updates with a `.catch()`');
+    tick();
+    expect(component.user.money).withContext('Your component should catch error on score updates').toBe(300);
+
+    // emulate a score update
+    user.money = 400;
+    fakeScoreUpdates.next(user);
+    tick();
+
+    expect(component.user.money).withContext('Your component should catch error on score updates').toBe(400);
+
+    // emulate a logout
+    fakeUserService.userEvents.next(null);
+    tick();
+
+    expect(component.user).withContext('Your component should listen to the `userEvents` observable on logout').toBe(null);
   }));
 
   it('should display the user if logged', () => {

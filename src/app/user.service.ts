@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { UserModel } from './models/user.model';
 import { tap } from 'rxjs/operators';
 import { JwtInterceptorService } from './jwt-interceptor.service';
+import { WsService } from './ws.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,11 @@ export class UserService {
   userAuthenticationUrl = environment.baseUrl + '/api/users/authentication';
   userEvents: BehaviorSubject<UserModel> = new BehaviorSubject<UserModel>(undefined);
 
-  constructor(private httpClient: HttpClient, private jwtInterceptorService: JwtInterceptorService) {
+  constructor(
+    private httpClient: HttpClient,
+    private jwtInterceptorService: JwtInterceptorService,
+    private wsService: WsService
+  ) {
     this.retrieveUser();
    }
 
@@ -75,5 +80,9 @@ export class UserService {
     this.userEvents.next(null);
     window.localStorage.removeItem('rememberMe');
     this.jwtInterceptorService.removeJwtToken();
+  }
+
+  scoreUpdates(userId: number) {
+    return this.wsService.connect<UserModel>(`/player/${userId}`);
   }
 }
