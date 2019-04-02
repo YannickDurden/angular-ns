@@ -82,6 +82,12 @@ export class UserService {
     this.jwtInterceptorService.removeJwtToken();
   }
 
+  isLoggedIn() {
+    const userFromLocalStorage = window.localStorage.getItem('rememberMe');
+
+    return userFromLocalStorage !== null;
+  }
+
   scoreUpdates(userId: number) {
     return this.wsService.connect<UserModel>(`/player/${userId}`);
   }
