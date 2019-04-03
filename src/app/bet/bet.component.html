@@ -1,4 +1,4 @@
-<div class="race" *ngIf="raceModel">
+<div class="race">
   <h2>{{ raceModel.name }}</h2>
   <a [routerLink]="['/races', raceModel.id, 'live']">Watch live!</a>
   <div class="alert alert-danger" *ngIf="betFailed">The race is already started or finished</div>

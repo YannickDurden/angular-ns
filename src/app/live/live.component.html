@@ -1,5 +1,5 @@
 <div>
-  <h2>{{ raceModel?.name }}</h2>
+  <h2>{{ raceModel.name }}</h2>
   <div class="alert alert-danger" *ngIf="error">A problem occurred during the live.</div>
   <div id="live-race" [ngSwitch]="raceModel?.status">
     <div *ngSwitchCase="'FINISHED'">

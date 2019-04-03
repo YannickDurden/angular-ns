@@ -1,69 +1,165 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { Router, RouterOutlet } from '@angular/router';
+import { Location } from '@angular/common';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
 
+import { AppModule } from '../app.module';
 import { RacesComponent } from './races.component';
-import { RaceComponent } from '../race/race.component';
-import { PonyComponent } from '../pony/pony.component';
-import { RaceService } from '../race.service';
-import { FromNowPipe } from '../from-now.pipe';
+import { AppComponent } from '../app.component';
+import { LoggedInGuard } from '../logged-in.guard';
+import { PendingRacesComponent } from './pending-races/pending-races.component';
+import { RacesResolverService } from '../races-resolver.service';
+import { FinishedRacesComponent } from './finished-races/finished-races.component';
 
 describe('RacesComponent', () => {
 
-  const service = jasmine.createSpyObj('RaceService', ['list']);
+  let appComponentFixture: ComponentFixture<AppComponent>;
 
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [RouterTestingModule],
-    declarations: [RacesComponent, RaceComponent, PonyComponent, FromNowPipe],
-    providers: [{ provide: RaceService, useValue: service }]
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [AppModule]
+    });
+
+    const loggedInGuard: LoggedInGuard = TestBed.get(LoggedInGuard);
+    spyOn(loggedInGuard, 'canActivate').and.returnValue(true);
+
+    const racesResolver: RacesResolverService = TestBed.get(RacesResolverService);
+    spyOn(racesResolver, 'resolve').and.returnValue([]);
+
+    appComponentFixture = TestBed.createComponent(AppComponent);
+    appComponentFixture.detectChanges();
+  });
+
+  it('should redirect from /races to /races/pending', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races');
+
+    tick();
+
+    const location: Location = TestBed.get(Location);
+    expect(location.path()).withContext('You should redirect from /races to /races/pending').toBe('/races/pending');
   }));
 
-  it('should display every race name in a title', () => {
-    service.list.and.returnValue(of([
-      { name: 'Lyon' },
-      { name: 'Los Angeles' },
-      { name: 'Sydney' },
-      { name: 'Tokyo' },
-      { name: 'Casablanca' }
-    ]));
+  it('should show two tabs', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races');
 
-    const fixture = TestBed.createComponent(RacesComponent);
-    fixture.detectChanges();
+    tick();
+    appComponentFixture.detectChanges();
 
-    expect(service.list).toHaveBeenCalled();
+    const racesComponent = appComponentFixture.debugElement.query(By.directive(RacesComponent));
 
-    expect(fixture.componentInstance.races).withContext('You need to have a field `races` initialized with 5 races').not.toBeNull();
-    expect(fixture.componentInstance.races.length).withContext('You need to have a field `races` initialized with 5 races').toBe(5);
-    expect(fixture.componentInstance.races[0].name).toBe('Lyon');
-    expect(fixture.componentInstance.races[1].name).toBe('Los Angeles');
-    expect(fixture.componentInstance.races[2].name).toBe('Sydney');
-    expect(fixture.componentInstance.races[3].name).toBe('Tokyo');
-    expect(fixture.componentInstance.races[4].name).toBe('Casablanca');
+    const tabLinks = racesComponent.nativeElement.querySelectorAll('.nav.nav-tabs .nav-item a.nav-link');
+    expect(tabLinks.length)
+      .withContext('You should have two tabs, one for pending races, one for the finished races')
+      .toBe(2);
+    expect(tabLinks[0].href).toContain('/races/pending');
+    expect(tabLinks[1].href).toContain('/races/finished');
+  }));
 
-    const debugElement = fixture.debugElement;
-    const raceNames = debugElement.queryAll(By.directive(RaceComponent));
-    expect(raceNames.length).withContext('You should have four `RaceComponent` displayed').toBe(4);
-  });
+  it('should have a router outlet', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races');
 
-  it('should display a link to bet on a race', () => {
-    service.list.and.returnValue(of([
-      { name: 'Lyon' },
-      { name: 'Los Angeles' },
-      { name: 'Sydney' },
-      { name: 'Tokyo' },
-      { name: 'Casablanca' }
-    ]));
+    tick();
 
-    const fixture = TestBed.createComponent(RacesComponent);
-    fixture.detectChanges();
+    const racesComponent = appComponentFixture.debugElement.query(By.directive(RacesComponent));
+    const outlet = racesComponent.query(By.directive(RouterOutlet));
 
-    const element = fixture.nativeElement;
-    const raceNames = element.querySelectorAll('a');
-    expect(raceNames.length).withContext('You must have a link to go to the bet page for each race').toBe(4);
-    expect(raceNames[0].textContent).toContain('Bet on Lyon');
-    expect(raceNames[1].textContent).toContain('Bet on Los Angeles');
-    expect(raceNames[2].textContent).toContain('Bet on Sydney');
-    expect(raceNames[3].textContent).toContain('Bet on Tokyo');
-  });
+    expect(outlet).withContext('You must have a router-outlet in your template').not.toBeNull();
+  }));
+
+  it('should have make first tab active when showing pending operations', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races');
+
+    tick();
+    appComponentFixture.detectChanges();
+    tick();
+
+    const racesComponent = appComponentFixture.debugElement.query(By.directive(RacesComponent));
+    const links = racesComponent.nativeElement.querySelectorAll('a.nav-link');
+    expect(links.length).withContext('You must have two links').toBe(2);
+    expect(links[0].className.split(' ')).withContext('The first link should be active').toContain('active');
+    expect(links[1].className.split(' ')).not.withContext('The second link should not be active').toContain('active');
+  }));
+
+  it('should have make second tab active when showing finished operations', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races/finished');
+
+    tick();
+    appComponentFixture.detectChanges();
+    tick();
+
+    const racesComponent = appComponentFixture.debugElement.query(By.directive(RacesComponent));
+    const links = racesComponent.nativeElement.querySelectorAll('a.nav-link');
+    expect(links.length).withContext('You must have two links').toBe(2);
+    expect(links[0].className.split(' ')).not.withContext('The first link should not be active').toContain('active');
+    expect(links[1].className.split(' ')).withContext('The second link should be active').toContain('active');
+  }));
+
+  it('should display pending operations in first tab', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races');
+
+    tick();
+
+    const pendingRacesComponent = appComponentFixture.debugElement.query(By.directive(PendingRacesComponent));
+    const finishedRacesComponent = appComponentFixture.debugElement.query(By.directive(FinishedRacesComponent));
+
+    expect(pendingRacesComponent)
+      .withContext('The router should display the PendingRacesComponent in the first tab for /races')
+      .not.toBeNull();
+    expect(finishedRacesComponent).withContext('The router should not display the FinishedRacesComponent for /races').toBeNull();
+  }));
+
+  it('should display finished operations in second tab', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races/finished');
+
+    tick();
+
+    const pendingRacesComponent = appComponentFixture.debugElement.query(By.directive(PendingRacesComponent));
+    const finishedRacesComponent = appComponentFixture.debugElement.query(By.directive(FinishedRacesComponent));
+
+    expect(pendingRacesComponent).withContext('The router should not display the PendingRacesComponent for /races/finished').toBeNull();
+    expect(finishedRacesComponent).withContext('The router should display the FinishedRacesComponent for /races/finished').not.toBeNull();
+  }));
+
+  it('should navigate when clicking on second tab', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races');
+
+    tick();
+    appComponentFixture.detectChanges();
+
+    const racesComponent = appComponentFixture.debugElement.query(By.directive(RacesComponent));
+    racesComponent.nativeElement.querySelectorAll('a')[1].click();
+
+    tick();
+    appComponentFixture.detectChanges();
+
+    const location: Location = TestBed.get(Location);
+
+    expect(location.path()).withContext('You must navigate to /races/finished when clicking on the second tab').toBe('/races/finished');
+  }));
+
+  it('should navigate when clicking on second tab', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    router.navigateByUrl('/races/finished');
+
+    tick();
+    appComponentFixture.detectChanges();
+
+    const racesComponent = appComponentFixture.debugElement.query(By.directive(RacesComponent));
+    racesComponent.nativeElement.querySelectorAll('a')[0].click();
+
+    tick();
+    appComponentFixture.detectChanges();
+
+    const location: Location = TestBed.get(Location);
+
+    expect(location.path()).withContext('You must navigate to /races/pending when clicking on the first tab').toBe('/races/pending');
+  }));
 });

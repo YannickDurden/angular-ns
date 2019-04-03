@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RaceModel, LiveRaceModel } from './models/race.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
@@ -15,15 +15,17 @@ export class RaceService {
   raceModel: RaceModel;
   liveRaceModel: LiveRaceModel;
 
-  constructor(private httpClient: HttpClient, private wsService: WsService) { }
+  constructor(private httpClient: HttpClient, private wsService: WsService) {
+  }
 
   /**
    * Récupère une liste de courses en attente
    */
-  list(): Observable<Array<RaceModel>> {
-    const urlListPendingRaces = environment.baseUrl + '/api/races?status=PENDING';
+  list(status: string): Observable<Array<RaceModel>> {
+    const urlListRaces = environment.baseUrl + '/api/races';
+    const params = new HttpParams().set('status', status);
 
-    return this.httpClient.get<Array<RaceModel>>(urlListPendingRaces);
+    return this.httpClient.get<Array<RaceModel>>(urlListRaces, { params });
   }
 
   /**
