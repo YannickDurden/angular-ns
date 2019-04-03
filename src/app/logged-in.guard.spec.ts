@@ -1,17 +1,22 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { RouterTestingModule, SpyNgModuleFactoryLoader } from '@angular/router/testing';
 import { Router, UrlTree } from '@angular/router';
+import { NgModuleFactoryLoader } from '@angular/core';
 
 import { LoggedInGuard } from './logged-in.guard';
 import { UserService } from './user.service';
 import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
+import { RacesModule } from './races/races.module';
 
 describe('LoggedInGuard', () => {
-
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AppModule]
+      imports: [AppModule, RacesModule, RouterTestingModule]
     });
+
+    const loader: SpyNgModuleFactoryLoader = TestBed.get(NgModuleFactoryLoader);
+    loader.stubbedModules = { './races/races.module#RacesModule': RacesModule };
   });
 
   it('should allow activation if user is logged in', () => {

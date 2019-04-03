@@ -96,7 +96,7 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-devkit/build-angula828282r:tslint",
           "options": {
             "tsConfig": [
               "src/tsconfig.app.json",

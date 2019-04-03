@@ -4,12 +4,13 @@ import { Location } from '@angular/common';
 import { By } from '@angular/platform-browser';
 
 import { AppModule } from '../app.module';
+import { RacesModule } from './races.module';
 import { RacesComponent } from './races.component';
 import { AppComponent } from '../app.component';
-import { LoggedInGuard } from '../logged-in.guard';
 import { PendingRacesComponent } from './pending-races/pending-races.component';
 import { RacesResolverService } from '../races-resolver.service';
 import { FinishedRacesComponent } from './finished-races/finished-races.component';
+import { RACES_ROUTES } from './races.routes';
 
 describe('RacesComponent', () => {
 
@@ -17,14 +18,17 @@ describe('RacesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AppModule]
+      imports: [AppModule, RacesModule]
     });
-
-    const loggedInGuard: LoggedInGuard = TestBed.get(LoggedInGuard);
-    spyOn(loggedInGuard, 'canActivate').and.returnValue(true);
 
     const racesResolver: RacesResolverService = TestBed.get(RacesResolverService);
     spyOn(racesResolver, 'resolve').and.returnValue([]);
+
+    // override the lazy loaded module
+    const router: Router = TestBed.get(Router);
+    router.resetConfig([
+      { path: 'races', children: RACES_ROUTES },
+    ]);
 
     appComponentFixture = TestBed.createComponent(AppComponent);
     appComponentFixture.detectChanges();

@@ -5,10 +5,10 @@ import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import * as moment from 'moment';
 
+import { RacesModule } from '../races/races.module';
 import { RaceService } from '../race.service';
 import { BetComponent } from './bet.component';
 import { PonyComponent } from '../pony/pony.component';
-import { FromNowPipe } from '../from-now.pipe';
 import { RaceModel } from '../models/race.model';
 import { PonyModel } from '../models/pony.model';
 
@@ -18,8 +18,7 @@ describe('BetComponent', () => {
   const fakeActivatedRoute = { snapshot: { data: { race } } };
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [RouterTestingModule],
-    declarations: [BetComponent, PonyComponent, FromNowPipe],
+    imports: [RacesModule, RouterTestingModule],
     providers: [
       { provide: RaceService, useValue: fakeRaceService },
       { provide: ActivatedRoute, useValue: fakeActivatedRoute }

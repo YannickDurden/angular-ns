@@ -1,5 +1,5 @@
 <h1>Log in</h1>
-<form (ngSubmit)="authenticate(loginForm.value)" #loginForm="ngForm">
+<form (ngSubmit)="authenticate()" #loginForm="ngForm">
   <div class="form-group">
     <label for="login" id="login-label">Login</label>
     <input id="login" type="text" class="form-control" name="login" required [(ngModel)]="credentials.login" #login="ngModel" >

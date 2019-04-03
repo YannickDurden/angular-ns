@@ -4,9 +4,9 @@
 
 <div class="text-center" *ngIf="!getAuthenticatedUser(); else racesMenu">
   <!-- insert the link with the routerLink here -->
-  <a routerLink="login" routerLinkActive="router-link-active"  class="btn btn-primary">Login</a>
+  <a [routerLink]="['/users','login']" routerLinkActive="router-link-active"  class="btn btn-primary">Login</a>
   <span>&nbsp;</span>
-  <a routerLink="register" routerLinkActive="router-link-active"  class="btn btn-primary">Register</a>
+  <a [routerLink]="['/users', 'register']" routerLinkActive="router-link-active"  class="btn btn-primary">Register</a>
 </div>
 <ng-template #racesMenu>
   <div class="text-center">

@@ -1,9 +1,10 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 
+import { UsersModule } from '../users/users.module';
 import { RegisterComponent } from './register.component';
 import { UserService } from '../user.service';
 
@@ -13,8 +14,7 @@ describe('RegisterComponent', () => {
   const fakeRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [ReactiveFormsModule],
-    declarations: [RegisterComponent],
+    imports: [UsersModule],
     providers: [
       { provide: UserService, useValue: fakeUserService },
       { provide: Router, useValue: fakeRouter }
@@ -237,9 +237,7 @@ describe('RegisterComponent', () => {
     expect(matchingErrorMessage)
       .withContext('You should have a div with the id `password-matching-error` to display the error')
       .not.toBeNull();
-    expect(matchingErrorMessage.textContent)
-      .withContext('Your error message is not correct')
-      .toContain('Your password does not match');
+    expect(matchingErrorMessage.textContent).withContext('Your error message is not correct').toContain('Your password does not match');
 
     // when adding a matching password
     const confirmPassword = nativeElement.querySelectorAll('[type="password"]')[1];
@@ -258,7 +256,7 @@ describe('RegisterComponent', () => {
   });
 
   it('should have min/max validators to check the year validity', () => {
-    const fixture: ComponentFixture<RegisterComponent> = TestBed.createComponent(RegisterComponent);
+    const fixture = TestBed.createComponent(RegisterComponent);
     fixture.detectChanges();
 
     const componentInstance = fixture.componentInstance;
@@ -272,9 +270,7 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
 
     // then we should have an error
-    expect(birthYearCtrl.hasError('min'))
-      .withContext('`birthYearCtrl` should have a `min` validator set to 1900')
-      .toBe(true);
+    expect(birthYearCtrl.hasError('min')).withContext('`birthYearCtrl` should have a `min` validator set to 1900').toBe(true);
     let invalidYearError = nativeElement.querySelector('#invalid-year-error');
     expect(invalidYearError)
       .withContext('A div with the id `invalid-year-error` must be displayed if the year is before 1900')
@@ -350,8 +346,7 @@ describe('RegisterComponent', () => {
     // and display the error message
     const errorMessage = fixture.nativeElement.querySelector('#registration-error');
     expect(errorMessage)
-      .withContext('You should display an error message in a div with id `registration-error` if the registration fails')
-      .not.toBeNull();
+      .withContext('You should display an error message in a div with id `registration-error` if the registration fails').not.toBeNull();
     expect(errorMessage.textContent).toContain('Try again with another login.');
   });
 
