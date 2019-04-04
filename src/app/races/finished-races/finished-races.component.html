@@ -1,4 +1,9 @@
-<div *ngFor="let race of races | slice:0:5">
+<ngb-pagination [collectionSize]="races.length"
+                [(page)]="page" size="lg"
+                [pageSize]= "12 / 4"
+                [directionLinks]="false">
+</ngb-pagination>
+<div *ngFor="let race of races | slice:(page - 1) * 10 : page * 10">
     <!--[raceModel] correspond à l'input du race component auquel on lui passe la variable race-->
     <pr-race [raceModel]="race"></pr-race>
 </div>

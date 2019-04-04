@@ -1,14 +1,15 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { ROUTES } from './app.routes';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule, PreloadAllModules } from '@angular/router';
-import { ROUTES } from './app.routes';
 import { HomeComponent } from './home/home.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { RouterModule, PreloadAllModules } from '@angular/router';
 import { JwtInterceptorService } from './jwt-interceptor.service';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { JwtInterceptorService } from './jwt-interceptor.service';
   imports: [
     FormsModule,
     BrowserModule,
+    NgbAlertModule,
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules }),

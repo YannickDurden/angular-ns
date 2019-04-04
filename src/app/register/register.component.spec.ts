@@ -2,12 +2,12 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { NgbAlert, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 
 import { UsersModule } from '../users/users.module';
 import { RegisterComponent } from './register.component';
 import { UserService } from '../user.service';
-import { AlertComponent } from '../shared/alert/alert.component';
 
 describe('RegisterComponent', () => {
 
@@ -15,7 +15,7 @@ describe('RegisterComponent', () => {
   const fakeRouter = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [UsersModule],
+    imports: [UsersModule, NgbAlertModule],
     providers: [
       { provide: UserService, useValue: fakeUserService },
       { provide: Router, useValue: fakeRouter }
@@ -345,9 +345,8 @@ describe('RegisterComponent', () => {
       .withContext('You should set a field `registrationFailed` to `true` if the registration fails')
       .toBe(true);
     // and display the error message
-    const errorMessage = fixture.debugElement.query(By.directive(AlertComponent));
-    expect(errorMessage)
-      .withContext('You should display an error message in an AlertComponent if the registration fails').not.toBeNull();
+    const errorMessage = fixture.debugElement.query(By.directive(NgbAlert));
+    expect(errorMessage).withContext('You should display an error message in an NgbAlert if the registration fails').not.toBeNull();
     expect(errorMessage.nativeElement.textContent).toContain('Try again with another login.');
     expect(errorMessage.componentInstance.type).withContext('The alert should be a danger one').toBe('danger');
   });

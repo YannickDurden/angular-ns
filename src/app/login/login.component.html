@@ -1,8 +1,8 @@
 <h1>Log in</h1>
 
-<pr-alert *ngIf="authenticationFailed" [dismissible]="true" (close)="authenticationFailed = false" type="danger">
+<ngb-alert *ngIf="authenticationFailed" [dismissible]="true" (close)="authenticationFailed = false" type="danger">
     Nope, try again
-</pr-alert>
+</ngb-alert>
 
 <form (ngSubmit)="authenticate()" #loginForm="ngForm">
   <div class="form-group">

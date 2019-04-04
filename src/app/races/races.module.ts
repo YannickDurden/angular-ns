@@ -11,6 +11,7 @@ import { LiveComponent } from '../live/live.component';
 import { PendingRacesComponent } from './pending-races/pending-races.component';
 import { FinishedRacesComponent } from './finished-races/finished-races.component';
 import { SharedModule } from '../shared/shared.module';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     RouterModule.forChild(RACES_ROUTES),
     SharedModule,
+    NgbPaginationModule
   ]
 })
 export class RacesModule { }
