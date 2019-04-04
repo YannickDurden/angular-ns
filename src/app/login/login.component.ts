@@ -28,5 +28,4 @@ export class LoginComponent implements OnInit {
       error => this.authenticationFailed = true
     );
   }
-
 }

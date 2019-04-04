@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 import { UsersModule } from '../users/users.module';
 import { RegisterComponent } from './register.component';
 import { UserService } from '../user.service';
+import { AlertComponent } from '../shared/alert/alert.component';
 
 describe('RegisterComponent', () => {
 
@@ -344,10 +345,11 @@ describe('RegisterComponent', () => {
       .withContext('You should set a field `registrationFailed` to `true` if the registration fails')
       .toBe(true);
     // and display the error message
-    const errorMessage = fixture.nativeElement.querySelector('#registration-error');
+    const errorMessage = fixture.debugElement.query(By.directive(AlertComponent));
     expect(errorMessage)
-      .withContext('You should display an error message in a div with id `registration-error` if the registration fails').not.toBeNull();
-    expect(errorMessage.textContent).toContain('Try again with another login.');
+      .withContext('You should display an error message in an AlertComponent if the registration fails').not.toBeNull();
+    expect(errorMessage.nativeElement.textContent).toContain('Try again with another login.');
+    expect(errorMessage.componentInstance.type).withContext('The alert should be a danger one').toBe('danger');
   });
 
 });

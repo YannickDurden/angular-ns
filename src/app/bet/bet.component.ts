@@ -18,10 +18,6 @@ export class BetComponent implements OnInit {
   constructor(private route: ActivatedRoute, private raceService: RaceService) { }
 
   ngOnInit() {
-    // this.raceId = this.route.snapshot.paramMap.get('raceId');
-    // this.raceService.get(this.raceId).subscribe(
-    //   race => this.raceModel = race
-    // );
     this.raceModel = this.route.snapshot.data.race;
   }
 

@@ -10,6 +10,7 @@ import { PonyComponent } from '../pony/pony.component';
 import { LiveComponent } from '../live/live.component';
 import { PendingRacesComponent } from './pending-races/pending-races.component';
 import { FinishedRacesComponent } from './finished-races/finished-races.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { FinishedRacesComponent } from './finished-races/finished-races.componen
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(RACES_ROUTES)
+    RouterModule.forChild(RACES_ROUTES),
+    SharedModule,
   ]
 })
 export class RacesModule { }
