@@ -1,6 +1,6 @@
 <div>
   <h2>{{ raceModel.name }}</h2>
-  <ngb-alert *ngIf="error" type="danger" [dismissible]="true" (close)="error = false">
+  <ngb-alert *ngIf="error" type="danger" [dismissible]="true" (close)="error">
       A problem occurred during the live.
   </ngb-alert>
   <div id="live-race" [ngSwitch]="raceModel?.status">

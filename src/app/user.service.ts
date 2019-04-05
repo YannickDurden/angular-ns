@@ -7,12 +7,14 @@ import { UserModel } from './models/user.model';
 import { tap } from 'rxjs/operators';
 import { JwtInterceptorService } from './jwt-interceptor.service';
 import { WsService } from './ws.service';
+import { MoneyHistoryModel } from './models/money-history.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   userRegistrationUrl = environment.baseUrl + '/api/users';
+  urlMoneyHistory = environment.baseUrl + '/api/money/history';
   userAuthenticationUrl = environment.baseUrl + '/api/users/authentication';
   userEvents: BehaviorSubject<UserModel> = new BehaviorSubject<UserModel>(undefined);
 
@@ -90,5 +92,9 @@ export class UserService {
 
   scoreUpdates(userId: number) {
     return this.wsService.connect<UserModel>(`/player/${userId}`);
+  }
+
+  getMoneyHistory() {
+    return this.httpClient.get<Array<MoneyHistoryModel>>(this.urlMoneyHistory);
   }
 }

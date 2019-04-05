@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RaceModel } from '../../models/race.model';
 
 @Component({
   selector: 'pr-finished-races',
   templateUrl: './finished-races.component.html',
-  styleUrls: ['./finished-races.component.css']
+  styleUrls: ['./finished-races.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinishedRacesComponent implements OnInit {
   races: Array<RaceModel> = [];

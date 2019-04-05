@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RaceService } from '../race.service';
 import { RaceModel } from '../models/race.model';
@@ -9,7 +9,8 @@ import { filter, switchMap, groupBy, mergeMap, bufferToggle, throttleTime, map, 
 @Component({
   selector: 'pr-live',
   templateUrl: './live.component.html',
-  styleUrls: ['./live.component.css']
+  styleUrls: ['./live.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LiveComponent implements OnInit, OnDestroy {
   raceModel: RaceModel;
@@ -21,7 +22,11 @@ export class LiveComponent implements OnInit, OnDestroy {
   error: boolean;
   raceId: string;
 
-  constructor(private raceService: RaceService, private route: ActivatedRoute) { }
+  constructor(
+    private ref: ChangeDetectorRef ,
+    private raceService: RaceService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     this.raceModel = this.route.snapshot.data.race;
@@ -31,8 +36,12 @@ export class LiveComponent implements OnInit, OnDestroy {
           positions => {
             this.poniesWithPosition = positions;
             this.raceModel.status = 'RUNNING';
+            this.ref.markForCheck();
           },
-          error => this.error = true,
+          error => {
+            this.error = true;
+            this.ref.markForCheck();
+          },
           () => {
             this.raceModel.status = 'FINISHED';
             this.winners = this.poniesWithPosition.filter(
@@ -41,6 +50,7 @@ export class LiveComponent implements OnInit, OnDestroy {
             this.betWon = this.winners.some(
               ponyWithPosition => ponyWithPosition.id === this.raceModel.betPonyId
             );
+            this.ref.markForCheck();
           }
         )
       ;
